@@ -1,0 +1,7 @@
+# Python
+F3-python/venv/
+__pycache__/
+*.pyc
+
+# NodeJS
+node_modules/
