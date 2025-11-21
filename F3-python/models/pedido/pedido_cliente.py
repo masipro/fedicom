@@ -1,7 +1,7 @@
 import datetime
 from models.error_fedicom import ErrorFedicom
 from models.crc import generar as generar_crc
-from global import validador
+from app_global import validador
 from .linea_pedido_cliente import LineaPedidoCliente
 
 class PedidoCliente:

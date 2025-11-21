@@ -1,6 +1,6 @@
 from models.error_fedicom import ErrorFedicom
 from models.crc import generar as generar_crc
-from global import validador
+from app_global import validador
 
 class LineaPedidoCliente:
     def __init__(self, json_data, tx_id, numero_posicion):

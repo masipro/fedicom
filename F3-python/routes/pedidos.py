@@ -4,7 +4,7 @@ from models.pedido.pedido_cliente import PedidoCliente
 from models.error_fedicom import ErrorFedicom
 from interfaces.sap import sap
 from interfaces.mongo import mongo
-from global.tokens import verifica_permisos
+#from app_global.tokens import verifica_permisos
 
 pedidos_bp = Blueprint('pedidos', __name__)
 
