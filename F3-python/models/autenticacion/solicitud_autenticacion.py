@@ -56,11 +56,11 @@ class SolicitudAutenticacion:
             return {'tokenGenerado': False, 'respuesta': ErrorFedicom('AUTH-005', 'Usuario o contraseña inválidos', 401), 'codigoEstado': 401}
 
     def generar_token(self, permisos):
-        from global.tokens import generar_token
+        from app_global.tokens import generar_token
         return generar_token(self.txId, self, permisos)
 
     def generar_respuesta_token(self, grupos):
-        from global.tokens import verificar_token
+        from app_global.tokens import verificar_token
         token = self.generar_token(grupos)
         respuesta = {'auth_token': token}
         if self.metadatos['debug']:

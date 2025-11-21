@@ -24,7 +24,7 @@ async def autenticar():
         return jsonify(e.to_dict()), e.status_code
 
 
-from global.tokens import verificar_token as verificar_token_logic
+from app_global.tokens import verificar_token as verificar_token_logic
 
 @auth_bp.route('/authenticate', methods=['GET'])
 def verificar_token():
