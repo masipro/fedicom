@@ -10,7 +10,7 @@ def main():
     if not db.query(Producto).first():
         db.add_all([Producto(codigo="ART001", stock=100), Producto(codigo="ART002", stock=0)])
     if not db.query(User).first():
-        create_user(db, "admin", "admin", role="admin")
+        create_user(db, "admin", "administrat0r", role="admin")
     if not db.query(Albaran).first():
         a1 = Albaran(numeroAlbaran="A001", fechaAlbaran=date(2025,1,10), codigoCliente="F123",
                      numeroPedido="PED-1001", numeroPedidoOrigen="PV001", almacen="0400",

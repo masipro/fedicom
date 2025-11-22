@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
-from db.models import get_db
-from db.crud import search_facturas, get_factura_by_numero
 from datetime import datetime
+
+from db.models import get_db, User
+from db.crud import search_facturas, get_factura_by_numero
+from .auth import get_current_user
 
 router = APIRouter()
 
@@ -14,7 +16,8 @@ def listar_facturas(
     fechaHasta: str | None = Query(None, description="dd/MM/yyyy"),
     offset: int = 0,
     limit: int = 50,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
     fd = datetime.strptime(fechaDesde, "%d/%m/%Y").date() if fechaDesde else None
     fh = datetime.strptime(fechaHasta, "%d/%m/%Y").date() if fechaHasta else None
@@ -31,7 +34,11 @@ def listar_facturas(
     return {"total": total, "items": items}
 
 @router.get("/facturas/{numeroFactura}")
-def obtener_factura(numeroFactura: str, db: Session = Depends(get_db)):
+def obtener_factura(
+    numeroFactura: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     fac = get_factura_by_numero(db, numeroFactura)
     if not fac:
         raise HTTPException(status_code=404, detail="Factura no encontrada")

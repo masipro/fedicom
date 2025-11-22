@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
-from db.models import get_db
-from db.crud import search_albaranes, get_albaran_by_numero
 from datetime import datetime
+
+from db.models import get_db, User
+from db.crud import search_albaranes, get_albaran_by_numero
+from .auth import get_current_user
 
 router = APIRouter()
 
@@ -15,7 +17,8 @@ def listar_albaranes(
     fechaHasta: str | None = Query(None, description="dd/MM/yyyy"),
     offset: int = 0,
     limit: int = 50,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
     fd = datetime.strptime(fechaDesde, "%d/%m/%Y").date() if fechaDesde else None
     fh = datetime.strptime(fechaHasta, "%d/%m/%Y").date() if fechaHasta else None
@@ -33,7 +36,11 @@ def listar_albaranes(
     return {"total": total, "items": items}
 
 @router.get("/albaran/{numeroAlbaran}")
-def obtener_albaran(numeroAlbaran: str, db: Session = Depends(get_db)):
+def obtener_albaran(
+    numeroAlbaran: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     alb = get_albaran_by_numero(db, numeroAlbaran)
     if not alb:
         raise HTTPException(status_code=404, detail="Albarán no encontrado")
