@@ -38,7 +38,7 @@ from auth_utils import (
     AuthError,
 )
 
-app = FastAPI(title="Fedicom 3.4.15 Mock Server", version=API_VERSION)
+app = FastAPI(title="Fedicom 3.4.15 Server", version=API_VERSION)
 
 app.add_middleware(
     CORSMiddleware,
@@ -51,10 +51,14 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 
+# -----------------------
+#   UTILIDADES COMUNES
+# -----------------------
 def common_headers(
     software_id: str = Header(..., alias="Software-ID"),
     content_api_version: str = Header(..., alias="Content-Api-Version"),
 ) -> Dict[str, str]:
+    # Aquí podrías validar content_api_version == API_VERSION si quisieras
     return {"software_id": software_id, "content_api_version": content_api_version}
 
 
@@ -74,7 +78,6 @@ async def auth_error_handler(request, exc: AuthError):
         headers={"Content-Api-Version": API_VERSION},
     )
 
-
 # -----------------------
 #   AUTENTICACIÓN
 # -----------------------
@@ -90,12 +93,15 @@ def authenticate(
         raise AuthError("AUTH-005", "Usuario o contraseña inválidos", status_code=401)
     if not verify_password(auth.password, user.password_hash, user.salt):
         raise AuthError("AUTH-005", "Usuario o contraseña inválidos", status_code=401)
+
     token = create_jwt(
         sub=user.username,
         extra_claims={"nombre": "Usuario Fedicom", "admin": str(user.is_admin).lower()},
     )
+
     if response is not None:
         response.headers["Content-Api-Version"] = API_VERSION
+
     return TokenResponse(auth_token=token)
 
 
@@ -114,6 +120,7 @@ def get_endpoint_versions(
 ) -> List[EndpointVersion]:
     if response is not None:
         response.headers["Content-Api-Version"] = API_VERSION
+
     endpoints = [
         EndpointVersion(
             url="/authenticate",
@@ -202,6 +209,7 @@ def crear_pedido(
     db: Session = Depends(get_db),
     response: Response = None,
 ) -> PedidoResponse:
+    # Validación básica tipo PDF
     cliente = db.query(Cliente).filter(Cliente.codigo_cliente == pedido.codigoCliente).first()
     if not cliente:
         return error_response("PED-ERR-002", "El parámetro “codigoCliente” es inválido")
@@ -243,6 +251,7 @@ def crear_pedido(
     pedido_db.numero_pedido = numero_pedido_generado
     pedido_dict["numeroPedido"] = numero_pedido_generado
 
+    # Completar orden y descripciónArticulo si falta
     for idx, linea in enumerate(pedido_dict["lineas"]):
         if linea.get("orden") is None:
             linea["orden"] = idx
@@ -624,3 +633,8 @@ def confirmar_albaran(
         response.headers["Content-Api-Version"] = API_VERSION
 
     return confirmacion
+
+@app.get("/",status_code=200,tags=["Status"])
+@app.get("/status",status_code=200,tags=["Status"])
+async def status():
+    return {"message": "Servidor Fedicom3 activo"}

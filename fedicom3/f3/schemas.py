@@ -7,6 +7,9 @@ class FedicomBase(BaseModel):
         extra = "allow"
 
 
+# -----------------------
+#   AUTENTICACIÓN
+# -----------------------
 class AuthRequest(BaseModel):
     user: str
     password: str
@@ -16,6 +19,9 @@ class TokenResponse(BaseModel):
     auth_token: str
 
 
+# -----------------------
+#   TIPOS COMUNES
+# -----------------------
 class ErrorItem(FedicomBase):
     codigo: str
     descripcion: str
@@ -42,6 +48,9 @@ class Incidencia(FedicomBase):
     descripcion: str
 
 
+# -----------------------
+#   PEDIDOS
+# -----------------------
 class LineaPedido(FedicomBase):
     orden: Optional[int] = None
     codigoArticulo: str
@@ -98,6 +107,9 @@ class PedidoModificacion(FedicomBase):
     lineas: List[PedidoModificacionLinea]
 
 
+# -----------------------
+#   DEVOLUCIONES
+# -----------------------
 class LineaDevolucion(FedicomBase):
     orden: Optional[int] = None
     numeroAlbaran: str
@@ -128,6 +140,9 @@ class Devolucion(FedicomBase):
     incidencias: Optional[List[ErrorItem]] = None
 
 
+# -----------------------
+#   FACTURAS
+# -----------------------
 class Impuesto(FedicomBase):
     tipo: str
     base: float
@@ -183,6 +198,9 @@ class Factura(FedicomBase):
     cargos: Optional[List[Cargo]] = None
 
 
+# -----------------------
+#   ALBARANES
+# -----------------------
 class InformacionLote(FedicomBase):
     lote: str
     fechaCaducidad: str
@@ -262,6 +280,9 @@ class Albaran(FedicomBase):
     impuestos: Optional[List[Impuesto]] = None
 
 
+# -----------------------
+#   CONFIRMACIÓN ALBARÁN
+# -----------------------
 class LineaConfirmacionAlbaran(FedicomBase):
     codigoArticulo: str
     lote: str
@@ -276,6 +297,9 @@ class ConfirmacionAlbaran(FedicomBase):
     lineas: List[LineaConfirmacionAlbaran]
 
 
+# -----------------------
+#   VERSIONES ENDPOINT
+# -----------------------
 class EndpointVersion(FedicomBase):
     url: str
     method: str
